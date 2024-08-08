@@ -1,0 +1,403 @@
+﻿@{
+    ViewData["Title"] = "Home Page";
+}
+
+<div class="text-center">
+    <h1 class="display-4">To - Do List</h1>
+</div>
+
+<body>
+    <div class="container">
+        <table id="taskTable">
+            <thead>
+                <tr>
+                    <th>Название</th>
+                    <th>Описание</th>
+                    <th>Приоритет</th>
+                    <th>Дата создания</th>
+                </tr>
+            </thead>
+            <tbody id="taskList">
+            </tbody>
+        </table>
+
+        <button id="addTaskButton">
+            <i class="fa fa-tasks"></i>
+            Добавить задачу
+        </button>
+    </div>
+
+    <!-- Модальное окно для создания задачи -->
+    <div id="taskModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <span class="close">&times;</span>
+                <h2>Создание задачи</h2>
+            </div>
+            <div class="modal-body">
+                <form id="taskForm">
+                    <label for="Name">Название задачи:</label>
+                    <input type="text" id="Name" name="Name" required>
+                    <label for="Description">Описание задачи:</label>
+                    <textarea id="Description" name="Description" required></textarea>
+                    <div class="row">
+                        <div class="col-sm-6">
+                            <label for="CreatedDate">Дата создания:</label>
+                            <input type="date" id="CreatedDate" name="CreatedDate" required>
+                        </div>
+                        <div class="col-sm-6">
+                            <label for="Priority">Приоритет:</label>
+                            <select id="Priority" name="Priority" required>
+                                <option value="low">Низкий</option>
+                                <option value="medium">Средний</option>
+                                <option value="high">Высокий</option>
+                            </select>
+                        </div>
+                    </div>
+                    <button type="submit">Создать задачу</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            position: relative;
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 20px;
+            margin-left: 200px;
+        }
+
+        table {
+            margin-left: 30px;
+            margin-right: 50px;
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+
+        th {
+            cursor: pointer;
+        }
+
+            th:hover {
+                background-color: #f2f2f2;
+            }
+
+        .doneButton {
+            cursor: pointer;
+            background-color: #4CAF50;
+            border: none;
+            color: white;
+            padding: 10px 20px;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 16px;
+            margin: 4px 2px;
+            transition-duration: 0.4s;
+            border-radius: 4px;
+        }
+
+            .doneButton:hover {
+                background-color: #45a049;
+            }
+
+        #addTaskButton {
+            background-color: #0073b7;
+            color: #fff;
+            border: 1px solid #0073b7;
+            border-radius: 5px;
+            padding: 10px 15px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.3s;
+            position: absolute;
+            top: -90px;
+            right: 45px;
+            margin-top: 60px;
+            padding: 5px 10px;
+            border: 1px solid #ccc;
+            border-radius: 3px;
+            cursor: pointer;
+        }
+
+            #addTaskButton:hover {
+                background-color: #005a97;
+            }
+
+            #addTaskButton:focus {
+                outline: none;
+                box-shadow: 0 0 0 2px rgba(0, 115, 183, 0.2);
+            }
+
+            #addTaskButton i {
+                margin-right: 10px;
+            }
+
+        /* Стили модального окна */
+        .modal {
+            display: none; /* Скрыто по умолчанию */
+            position: fixed; 
+            z-index: 1; 
+            left: 0;
+            top: 0;
+            width: 100%; 
+            height: 100%; 
+            overflow: auto; /* Прокрутка при необходимости */
+            background-color: rgb(0,0,0); /* Цвет фона */
+            background-color: rgba(0,0,0,0.4); /* Полупрозрачный фон */
+        }
+
+        /* Модальное содержимое */
+        .modal-content {
+            position: relative;
+            background-color: #fff;
+            margin: 10% auto; /* Отступы сверху и снизу 10%, по горизонтали - авто */
+            padding: 20px;
+            border: 1px solid #888;
+            width: 40%;
+            height: 70%;
+            bottom: 30px;
+            color: black;
+        }
+
+        /* Заголовок модального окна *** */
+        .modal-header {
+            background-color: #444;
+            color: #fff;
+            padding: 10px;
+        }
+
+        /* Кнопка закрытия модального окна */
+        .close {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+            .close:hover,
+            .close:focus {
+                color: black;
+                text-decoration: none;
+            }
+
+
+        .modal.show {
+            display: block;
+        }
+
+        .modal.hide {
+            display: none;
+        }
+
+        #taskModal {
+            z-index: 101; 
+        }
+
+        /* Строки */
+        .row {
+            margin-bottom: 10px;
+        }
+
+        /* Колонки */
+        .col-sm-6 {
+            width: 50%;
+            float: left;
+        }
+
+        /* Выпадающий список */
+        select {
+            width: 100%;
+            padding: 5px;
+            border: 1px solid #ccc;
+            border-radius: 3px;
+            margin-bottom: 10px;
+        }
+
+        .modal-header h2 {
+            margin: 0;
+        }
+
+        .modal-body label {
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        /*Ввод текста*/
+        input,
+        textarea {
+            width: 100%;
+            padding: 5px;
+            border: 1px solid #ccc;
+            border-radius: 3px;
+            margin-bottom: 10px;
+        }
+
+        input[type="text"] {
+            margin-left: 200px;
+            width: 80%;
+            padding: 10px;
+            margin-bottom: 20px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+
+        #taskDescription {
+            height: 100px;
+            resize: none;
+        }
+
+        #taskDate,
+        #taskPriority {
+            height: 40px;
+        }
+
+        .row {
+            margin-bottom: 20px;
+        }
+
+        #Name {
+            margin-left: 0px;
+        }
+
+    </style>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            loadTasks();
+
+            // Модальное окно
+            var modal = document.getElementById('taskModal');
+            var btn = document.getElementById('addTaskButton');
+            var span = document.getElementsByClassName('close')[0];
+
+            // Открыть модальное окно при нажатии на кнопку
+            btn.onclick = function () {
+                modal.style.display = 'block';
+            }
+
+            // Закрыть модальное окно при нажатии на <span> (x)
+            span.onclick = function () {
+                modal.style.display = 'none';
+            }
+
+            // Закрыть модальное окно при нажатии вне его
+            window.onclick = function (event) {
+                if (event.target == modal) {
+                    modal.style.display = 'none';
+                }
+            }
+
+            // Обработчик формы
+            document.getElementById('taskForm').addEventListener('submit', function (event) {
+                event.preventDefault(); // Предотвращаем стандартное поведение формы
+
+                const formData = {
+                    Name: document.getElementById('Name').value,
+                    Description: document.getElementById('Description').value,
+                    CreatedDate: document.getElementById('CreatedDate').value,
+                    Priority: document.getElementById('Priority').value
+                };
+
+                // Post запрос на создание задачи 
+                fetch('/Home/CreateTask', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(formData)
+                })
+                    .then(response => {
+                        if (response.ok) {
+                            // Закрываем модальное окно
+                            modal.style.display = 'none';
+                            // Перезагружаем список задач
+                            loadTasks();
+                        } else {
+                            return response.json().then(err => {
+                                throw new Error(err);
+                            });
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Ошибка создания задачи:', error);
+                        alert(`Ошибка: ${error.message}`);
+                    });
+            });
+        });
+
+        // GET запрос на получение всех задач
+        function loadTasks() {
+            fetch('/Home/GetTasks') // Выполняем GET запрос к серверу
+                .then(response => response.json()) // Преобразуем ответ в JSON
+                .then(data => displayTasks(data)) // Передаем полученные данные для отображения
+                .catch(error => console.error('Ошибка загрузки задач:', error));
+        }
+
+        // Отображение задач
+        function displayTasks(tasks) {
+            const taskList = document.getElementById('taskList');
+            taskList.innerHTML = ''; // Очищаем текущий список задач
+
+            tasks.forEach(task => {
+                const row = taskList.insertRow();
+                row.insertCell(0).textContent = task.name;
+                row.insertCell(1).textContent = task.description;
+                row.insertCell(2).textContent = new Date(task.createdDate).toLocaleString();
+                row.insertCell(3).textContent = task.priority;
+
+                const cell = row.insertCell(4);
+                const doneButton = document.createElement('button');
+                doneButton.textContent = 'Выполнено';
+                doneButton.className = 'doneButton';
+                doneButton.addEventListener('click', () => markTaskAsDone(task.name));
+                cell.appendChild(doneButton);
+            });
+        }
+
+        //Отметка о выполнении задачи
+        function markTaskAsDone(taskName) {
+            fetch('/Home/MarkAsDone?taskname=' + encodeURIComponent(taskName), {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            })
+                .then(response => {
+                    if (response.ok) {
+                        console.log('Статус задачи изменен');
+                        location.reload(); // Перезагружаем страницу после успешного выполнения
+                    } else {
+                        console.error('Ошибка при изменении статуса задачи');
+                    }
+                })
+                .catch(error => {
+                    console.error('Ошибка при выполнении запроса:', error);
+                });
+        }
+    </script>
+</body>
+</html>
